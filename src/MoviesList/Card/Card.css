@@ -1,0 +1,37 @@
+.card a{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform .2s ease;
+}
+.card button{
+    margin-top: auto;
+}
+.card__body{
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    flex-grow: 1;
+}
+
+.card__title{
+    margin-bottom: 0;
+    font-size: 1.3rem;
+}
+.card__poster{
+    object-fit: cover;
+    object-position: top;
+    background-color: #e3e3e3;
+    height: 200px;
+    width: 100%;
+}
+.card a:hover,
+.card a:focus{
+    text-decoration: none;
+    transform: scale(1.05);
+}
+
+.card__badge{
+    background-color: #f0506e !important;
+}

@@ -1,0 +1,117 @@
+.menu {
+    position: sticky;
+    left: 0;
+    top: 0;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 30px;
+    min-width: 320px;
+    height: 100vh;
+    box-sizing: border-box;
+    
+    overflow-y: scroll;
+    scrollbar-color: #74baff #e5e5e5;
+    scrollbar-width: thin;
+}
+
+.menu__logo {
+    color: #333333;
+    line-height: 2rem;
+    font-size: 2rem;
+    align-self: center;
+    transition: .3s ease;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.menu__logo:hover,
+.menu__logo:focus {
+    letter-spacing: 1.5px;
+    color: #333333;
+    text-decoration: none;
+}
+
+.menu__toggle{
+    display: none;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 25px;
+    right: 20px;
+    background-color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
+
+.menu__toggle::before{
+    content:"";
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    height: 3px;
+    box-shadow: 0 9px 0 0 currentColor, 0 18px 0 0 currentColor;
+    top: 13px;
+    background-color: #333333;
+    color: #333333;
+}
+
+.menu__genres {
+    display: flex;
+    flex-direction: column;
+    transition: .3s ease;
+}
+
+.menu__link {
+    padding: 10px;
+    color: #1e87f0;
+    font-size: 1.2rem;
+    transition: .3s ease;
+
+}
+.menu__link--active{
+    background-color: #e3e3e3;
+    color: #222323;
+
+}
+.menu__link:hover,
+.menu__link:focus {
+    letter-spacing: 1.2px;
+    color: #222323;
+
+}
+@media(max-width: 1199px){
+    .menu {
+        min-width: 280px;
+        height: auto;
+        z-index: 2;
+        overflow: hidden;
+        
+    box-shadow: 0 0 3px 0 #323232;
+    }
+    .menu__genres{
+        max-height: 0;
+        overflow-y: scroll;
+    }
+    .menu__genres--opened{
+        max-height: 100vh;
+    }
+    .menu__toggle{
+        display: block;
+    }
+}
+
+
+@media(max-width: 640px) {
+    .menu{
+        padding-top: 10px;
+    }
+    .menu__logo{
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+    }
+    .menu__toggle{
+        top: 5px;
+    }
+
+}

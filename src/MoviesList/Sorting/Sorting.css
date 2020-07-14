@@ -1,0 +1,35 @@
+.sorting{
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.sorting__item{
+    color: #ffffff !important;
+    margin-right: 15px  !important;
+}
+
+.sorting__item::before{
+    border-color: #ffffff  !important;
+}
+
+.sorting__item--active::before{
+    right: 0 !important;
+}
+
+@media(max-width: 640px) {
+    .sorting{
+        margin-bottom: 15px;
+    }
+
+}
+
+@media(max-width: 450px) {
+    .sorting{
+        flex-direction: column;
+        align-items: center;
+    }
+    .sorting__item{
+        margin: 7px  !important;
+    }
+    
+}

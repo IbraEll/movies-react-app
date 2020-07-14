@@ -1,0 +1,26 @@
+.list{
+    padding-top: 35px;
+    min-height: 100vh;
+}
+.list__btns{
+    max-width: 320px;
+    margin: auto;
+    padding: 25px;
+    display: flex;
+    justify-content: space-between ;
+}
+
+.list__btns .uk-input{
+    width: 50px;
+    text-align: center;
+}
+
+@media(max-width: 640px) {
+    .list{
+        padding-top: 15px;
+    }
+    .list__btns{
+        padding: 25px 0;
+    }
+
+}
