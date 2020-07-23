@@ -5,6 +5,7 @@ import './MovieList.css';
 import { withRouter } from 'react-router-dom';
 import MovieService from './../Services/MovieService';
 import Spinner from './../Spinner/Spinner';
+import ErrorMessage from './../ErrorMessage/ErrorMessage'
 
 
 class MoviesList extends React.Component{
@@ -16,7 +17,8 @@ class MoviesList extends React.Component{
             currentPage: 1,
             totalPage: 0,
             genreId: 0,
-            isLoading : true
+            isLoading : true,
+            isError: false
         }
     }
     MovieService = new MovieService();
@@ -34,7 +36,7 @@ class MoviesList extends React.Component{
     }
     componentWillReceiveProps(newProps){
         const { id: genreId, page } = newProps.match.params;
-        this.setState({genreId, currentPage : page || 1},
+        this.setState({genreId, currentPage : page || 1, isError: false, isLoading: true},
             () => {this.getMovies()});
     }
 
@@ -43,10 +45,17 @@ class MoviesList extends React.Component{
         const {genreId, currentPage, sorting} = this.state;        
         this.MovieService.getMovies(sorting, currentPage, genreId)
         .then(data =>{
+            console.log(data);
+            if(data.results.length === 0) throw new Error ("Нет результатов по такому запросу");
             this.setState({movieList : data.results,
                             totalPage : data.total_pages,
                             isLoading : false})
         })
+        .catch(this.onError)
+    }
+    
+    onError = (c) => {
+        this.setState({isError: true, isLoading: false})
     }
 
     // Переход на указанную страницу 
@@ -72,10 +81,10 @@ class MoviesList extends React.Component{
         let nextPage = 0;
         switch(e.target.dataset.direction){
             case "forward":
-                nextPage = this.state.currentPage + 1;
+                nextPage = parseInt(this.state.currentPage) + 1;
                 break;
             case "back":
-                nextPage = this.state.currentPage - 1;
+                nextPage = parseInt(this.state.currentPage) - 1;
                 break;
             default: break;
         }
@@ -85,11 +94,15 @@ class MoviesList extends React.Component{
     }
 
     render(){
-        const {sorting, movieList, isLoading, currentPage} = this.state;
+        const {sorting, movieList, isLoading, currentPage, isError} = this.state;
         return(
             <section className="list">
                 <Sorting active={sorting} handleClick={this.changeSorting}/>
                 {isLoading ? <Spinner/> : null}
+                {isError ? <ErrorMessage item="фильмы"/> : null}
+                        {/* {!isError && !isLoading  ? <CardInfo movie={this.state.movie}/> : null} */}
+
+
                 <div className="list__cards uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l" uk-grid="true">
                      {movieList.map((movie) => {
                         const isFavorite = this.props.favoriteList.indexOf(movie.id) !== -1 ? true : false;
@@ -102,12 +115,12 @@ class MoviesList extends React.Component{
                     <button className="uk-button uk-button-primary" 
                             data-direction="back"
                             onClick={this.handleClick}
-                            disabled={currentPage==1}>Назад</button>
+                            disabled={currentPage==1 || isError || isLoading}>Назад</button>
                     <input className="uk-input" type="number" placeholder={currentPage} name="currentPage" onKeyDown={this.handleKeyDown}/>
                     <button className="uk-button uk-button-primary"
                             data-direction="forward"
                             onClick={this.handleClick}
-                            disabled={currentPage==this.state.totalPage}>Вперёд</button>
+                            disabled={currentPage==this.state.totalPage || isError || isLoading}>Вперёд</button>
                 </div>
             </section>
         )

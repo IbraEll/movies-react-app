@@ -3,7 +3,7 @@ import './Movie.css';
 import noImg from './noimage.png';
 import MovieService from './../Services/MovieService';
 import Spinner from './../Spinner/Spinner'
-import { render } from '@testing-library/react';
+import ErrorMessage from './../ErrorMessage/ErrorMessage'
 
 
 class Card extends React.Component{
@@ -12,7 +12,8 @@ class Card extends React.Component{
         this.state = {
           movie : [],
           isFavorite: false,
-          isLoading: true
+          isLoading: true,
+          isError: false,
         }
     }
     MovieService = new MovieService();
@@ -29,12 +30,14 @@ class Card extends React.Component{
             const isFavorite = this.props.favoriteList.indexOf(data.id) !== -1 ? true : false;
             this.setState({movie : data, isFavorite, isLoading: false})
         })
+        .catch(this.onError);
     }
 
-
-
+    onError = () => {
+        this.setState({isError: true, isLoading: false})
+    }
     // Переход на предыдущую страницу
-    goBack = () =>{
+    goBack = () => {
         this.props.history.goBack();
     }
     
@@ -47,19 +50,23 @@ class Card extends React.Component{
     }
 
     render(){        
-        const {title, poster_path} = this.state.movie;
-        const imagePath = `http://image.tmdb.org/t/p/w500${poster_path}`
+        const {isLoading, isError, movie : {title, poster_path : posterPath}} = this.state;
+        const imagePath = `http://image.tmdb.org/t/p/w500${posterPath}`;
         return(
             <section className="movie">
                 <button onClick={this.goBack} className="uk-button uk-button-text movie__back">Назад</button>
                 <div className="uk-card uk-card-default movie__card">
                     <div className="movie__left">
-                        <img src={poster_path ? imagePath : noImg} alt={title} className="movie__poster"/>
-                        <button className="uk-button uk-button-danger movie__fav" onClick={this.handleClick}>
+                        <img src={posterPath ? imagePath : noImg} alt={title} className="movie__poster"/>
+                        <button className="uk-button uk-button-danger movie__fav" 
+                                onClick={this.handleClick}
+                                disabled={this.state.isError}>
                             {this.state.isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
                         </button>
                     </div>
-                        {this.state.isLoading ? <Spinner/> : <CardInfo movie={this.state.movie}/>}
+                        {isLoading ? <Spinner/> : null}
+                        {isError ? <ErrorMessage item="фильм"/> : null}
+                        {!isError && !isLoading  ? <View movie={this.state.movie}/> : null}
                    
                 </div>
             </section>
@@ -67,7 +74,7 @@ class Card extends React.Component{
     }
 }
 
-class CardInfo extends React.Component {
+class View extends React.Component {
     // Преобразование длительности фильма из минут к виду "Х ч. Х мин."
     getRuntime = (minutes) =>{
         if(!minutes) return ""
