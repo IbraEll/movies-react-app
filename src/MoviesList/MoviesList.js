@@ -14,6 +14,7 @@ class MoviesList extends React.Component{
             sorting: "popularity.desc",
             currentPage: 1,
             totalPage: 0,
+            genreId: 0
         }
     }
     MovieService = new MovieService();
@@ -38,7 +39,7 @@ class MoviesList extends React.Component{
     // Получение списка фильмов 
     getMovies = () =>{
         const {genreId, currentPage, sorting} = this.state;        
-        this.MovieService.getMovies()
+        this.MovieService.getMovies(sorting, currentPage, genreId)
         .then(data =>{
             this.setState({movieList : data.results,
                             totalPage : data.total_pages})
