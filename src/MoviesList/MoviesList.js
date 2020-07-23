@@ -3,6 +3,7 @@ import Card from './Card/Card';
 import Sorting from './Sorting/Sorting';
 import './MovieList.css';
 import { withRouter } from 'react-router-dom';
+import MovieService from './../Services/MovieService'
 
 
 class MoviesList extends React.Component{
@@ -15,6 +16,8 @@ class MoviesList extends React.Component{
             totalPage: 0,
         }
     }
+    MovieService = new MovieService();
+
     componentDidMount(){
         const { id: genreId, page } = this.props.match.params;
         this.setState({genreId : genreId, currentPage : page || 1},
@@ -32,21 +35,12 @@ class MoviesList extends React.Component{
             () => {this.getMovies()});
     }
 
-    // Генерация ссылки для запроса фильмов
-    getPath = (genre, currentPage, sorting) =>{
-        let path = `https://api.themoviedb.org/3/discover/movie?api_key=4237669ebd35e8010beee2f55fd45546&language=ru&sort_by=${sorting}&page=${currentPage}`;
-        if (genre > 0) path += `&with_genres=${genre}`;
-        return path;
-    }
-
     // Получение списка фильмов 
     getMovies = () =>{
         const {genreId, currentPage, sorting} = this.state;        
         const path = this.getPath(genreId, currentPage, sorting);
-        fetch(path)
-        .then(data => {
-            return data.json();
-        })
+        console.log(path);
+        this.MovieService.getMovies()
         .then(data =>{
             this.setState({movieList : data.results,
                             totalPage : data.total_pages})

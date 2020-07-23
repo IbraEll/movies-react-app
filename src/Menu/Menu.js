@@ -1,6 +1,7 @@
 import React from 'react';
 import {NavLink, Link} from 'react-router-dom';
 import './Menu.css'
+import MovieService from './../Services/MovieService'
 
 class Menu extends React.Component{
     constructor(props){
@@ -10,6 +11,7 @@ class Menu extends React.Component{
             'menuIsOpen': false
         }
     }
+    MovieService = new MovieService();
 
     componentDidMount(){
         this.getGenres();
@@ -17,10 +19,7 @@ class Menu extends React.Component{
     
     // Получение списка жанров
     getGenres = () =>{
-        fetch('https://api.themoviedb.org/3/genre/movie/list?api_key=4237669ebd35e8010beee2f55fd45546&language=ru')
-        .then(data => {
-            return data.json();
-        })
+        this.MovieService.getGenres()
         .then(data =>{
             this.setState({genresList : data.genres})
         })
@@ -57,7 +56,6 @@ class Menu extends React.Component{
                         })}
                 </div>
             </header>
-
         )
     }
 }

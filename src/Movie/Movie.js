@@ -1,6 +1,7 @@
 import React from 'react';
 import './Movie.css';
 import noImg from './noimage.png';
+import MovieService from './../Services/MovieService'
 
 class Card extends React.Component{
     constructor(props){
@@ -10,17 +11,16 @@ class Card extends React.Component{
           isFavorite: false
         }
     }
+    MovieService = new MovieService();
+    
     componentDidMount(){
         this.getMovie();
-    }
+    }    
 
     // Получение информации о фильме
     getMovie = () => {        
         const { id } = this.props.match.params;
-        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=4237669ebd35e8010beee2f55fd45546&language=ru`)
-        .then(data => {
-            return data.json();
-        })
+        this.MovieService.getMovie(id)
         .then(data =>{
             const isFavorite = this.props.favoriteList.indexOf(data.id) !== -1 ? true : false;
             this.setState({movie : data, isFavorite: isFavorite})
