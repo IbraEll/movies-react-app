@@ -27,7 +27,7 @@ class Menu extends React.Component{
 
     // Переключение состояния меню на мобилке
     toggleMenu = () => {
-        this.setState({menuIsOpen : !this.state.menuIsOpen})
+        this.setState(({menuIsOpen}) => ({menuIsOpen : !this.state.menuIsOpen}))
     }
     closeMenu = () => {
         this.setState({menuIsOpen : false})

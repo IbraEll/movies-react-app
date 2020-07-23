@@ -41,7 +41,7 @@ class App extends React.Component {
       <div className="App">
         <Router>
           <Menu genreId={this.state.genreId}/>
-          <div className="uk-container">
+          <div className="uk-container uk-width-1-1">
 
             <Switch>
               <Route path="/movie/:id"  render={(props) => (

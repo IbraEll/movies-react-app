@@ -3,7 +3,8 @@ import Card from './Card/Card';
 import Sorting from './Sorting/Sorting';
 import './MovieList.css';
 import { withRouter } from 'react-router-dom';
-import MovieService from './../Services/MovieService'
+import MovieService from './../Services/MovieService';
+import Spinner from './../Spinner/Spinner';
 
 
 class MoviesList extends React.Component{
@@ -14,14 +15,15 @@ class MoviesList extends React.Component{
             sorting: "popularity.desc",
             currentPage: 1,
             totalPage: 0,
-            genreId: 0
+            genreId: 0,
+            isLoading : true
         }
     }
     MovieService = new MovieService();
 
     componentDidMount(){
         const { id: genreId, page } = this.props.match.params;
-        this.setState({genreId : genreId, currentPage : page || 1},
+        this.setState({genreId, currentPage : page || 1},
             () => {this.getMovies()});
     }
     componentDidUpdate(){
@@ -32,7 +34,7 @@ class MoviesList extends React.Component{
     }
     componentWillReceiveProps(newProps){
         const { id: genreId, page } = newProps.match.params;
-        this.setState({genreId : genreId, currentPage : page || 1},
+        this.setState({genreId, currentPage : page || 1},
             () => {this.getMovies()});
     }
 
@@ -42,7 +44,8 @@ class MoviesList extends React.Component{
         this.MovieService.getMovies(sorting, currentPage, genreId)
         .then(data =>{
             this.setState({movieList : data.results,
-                            totalPage : data.total_pages})
+                            totalPage : data.total_pages,
+                            isLoading : false})
         })
     }
 
@@ -82,11 +85,13 @@ class MoviesList extends React.Component{
     }
 
     render(){
+        const {sorting, movieList, isLoading, currentPage} = this.state;
         return(
             <section className="list">
-                <Sorting active={this.state.sorting} handleClick={this.changeSorting}/>
+                <Sorting active={sorting} handleClick={this.changeSorting}/>
+                {isLoading ? <Spinner/> : null}
                 <div className="list__cards uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l" uk-grid="true">
-                     {this.state.movieList.map((movie) => {
+                     {movieList.map((movie) => {
                         const isFavorite = this.props.favoriteList.indexOf(movie.id) !== -1 ? true : false;
                         return(
                             <Card key={movie.id} movie={movie} isFavorite={isFavorite}/>
@@ -97,16 +102,17 @@ class MoviesList extends React.Component{
                     <button className="uk-button uk-button-primary" 
                             data-direction="back"
                             onClick={this.handleClick}
-                            disabled={this.state.currentPage==1}>Назад</button>
-                    <input className="uk-input" type="number" placeholder={this.state.currentPage} name="currentPage" onKeyDown={this.handleKeyDown}/>
+                            disabled={currentPage==1}>Назад</button>
+                    <input className="uk-input" type="number" placeholder={currentPage} name="currentPage" onKeyDown={this.handleKeyDown}/>
                     <button className="uk-button uk-button-primary"
                             data-direction="forward"
                             onClick={this.handleClick}
-                            disabled={this.state.currentPage==this.state.totalPage}>Вперёд</button>
+                            disabled={currentPage==this.state.totalPage}>Вперёд</button>
                 </div>
             </section>
         )
     }
 }
+
 
 export default withRouter (MoviesList);
