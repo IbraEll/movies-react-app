@@ -38,8 +38,6 @@ class MoviesList extends React.Component{
     // Получение списка фильмов 
     getMovies = () =>{
         const {genreId, currentPage, sorting} = this.state;        
-        const path = this.getPath(genreId, currentPage, sorting);
-        console.log(path);
         this.MovieService.getMovies()
         .then(data =>{
             this.setState({movieList : data.results,
