@@ -39,13 +39,12 @@ class MoviesList extends React.Component{
         this.setState({genreId, currentPage : page || 1, isError: false, isLoading: true},
             () => {this.getMovies()});
     }
-
+    
     // Получение списка фильмов 
     getMovies = () =>{
         const {genreId, currentPage, sorting} = this.state;        
         this.MovieService.getMovies(sorting, currentPage, genreId)
         .then(data =>{
-            console.log(data);
             if(data.results.length === 0) throw new Error ("Нет результатов по такому запросу");
             this.setState({movieList : data.results,
                             totalPage : data.total_pages,
@@ -54,7 +53,7 @@ class MoviesList extends React.Component{
         .catch(this.onError)
     }
     
-    onError = (c) => {
+    onError = () => {
         this.setState({isError: true, isLoading: false})
     }
 
@@ -100,17 +99,19 @@ class MoviesList extends React.Component{
                 <Sorting active={sorting} handleClick={this.changeSorting}/>
                 {isLoading ? <Spinner/> : null}
                 {isError ? <ErrorMessage item="фильмы"/> : null}
-                        {/* {!isError && !isLoading  ? <CardInfo movie={this.state.movie}/> : null} */}
+
+                {isLoading ? null :
+                    <div className="list__cards uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l" uk-grid="true">
+                        {movieList.map((movie) => {
+                            const isFavorite = this.props.favoriteList.indexOf(movie.id) !== -1 ? true : false;
+                            return(
+                                <Card key={movie.id} movie={movie} isFavorite={isFavorite}/>
+                            )
+                        })}                
+                    </div>
+                }
 
 
-                <div className="list__cards uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l" uk-grid="true">
-                     {movieList.map((movie) => {
-                        const isFavorite = this.props.favoriteList.indexOf(movie.id) !== -1 ? true : false;
-                        return(
-                            <Card key={movie.id} movie={movie} isFavorite={isFavorite}/>
-                         )
-                    })}                
-                </div>
                 <div className="list__btns">
                     <button className="uk-button uk-button-primary" 
                             data-direction="back"

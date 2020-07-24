@@ -50,7 +50,7 @@ class Card extends React.Component{
     }
 
     render(){        
-        const {isLoading, isError, movie : {title, poster_path : posterPath}} = this.state;
+        const {isLoading, isFavorite, isError, movie : {title, poster_path : posterPath}} = this.state;
         const imagePath = `http://image.tmdb.org/t/p/w500${posterPath}`;
         return(
             <section className="movie">
@@ -60,8 +60,8 @@ class Card extends React.Component{
                         <img src={posterPath ? imagePath : noImg} alt={title} className="movie__poster"/>
                         <button className="uk-button uk-button-danger movie__fav" 
                                 onClick={this.handleClick}
-                                disabled={this.state.isError}>
-                            {this.state.isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
+                                disabled={isError}>
+                            {isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
                         </button>
                     </div>
                         {isLoading ? <Spinner/> : null}
