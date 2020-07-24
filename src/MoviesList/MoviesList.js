@@ -1,11 +1,13 @@
 import React from 'react';
-import Card from './Card/Card';
-import Sorting from './Sorting/Sorting';
 import './MovieList.css';
 import { withRouter } from 'react-router-dom';
 import MovieService from './../Services/MovieService';
+
+import Card from '../Card/Card';
+import Sorting from './Sorting/Sorting';
+import RandomFilms from './../RandomFilms/RandomFilms';
 import Spinner from './../Spinner/Spinner';
-import ErrorMessage from './../ErrorMessage/ErrorMessage'
+import ErrorMessage from './../ErrorMessage/ErrorMessage';
 
 
 class MoviesList extends React.Component{
@@ -96,6 +98,7 @@ class MoviesList extends React.Component{
         const {sorting, movieList, isLoading, currentPage, isError} = this.state;
         return(
             <section className="list">
+                <RandomFilms/>
                 <Sorting active={sorting} handleClick={this.changeSorting}/>
                 {isLoading ? <Spinner/> : null}
                 {isError ? <ErrorMessage item="фильмы"/> : null}
