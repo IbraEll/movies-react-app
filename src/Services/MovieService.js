@@ -26,5 +26,8 @@ export default class MovieService{
     }
     getMovie(id){
         return this.getRresource(`/movie/${id}?`);
-    }    
+    }   
+    getSimilarMovies(id){
+        return this.getRresource(`/movie/${id}/similar?`);
+    }   
 }
