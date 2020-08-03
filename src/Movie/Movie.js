@@ -2,8 +2,10 @@ import React from 'react';
 import './Movie.css';
 import noImg from './noimage.png';
 import MovieService from './../Services/MovieService';
-import Spinner from './../Spinner/Spinner'
-import ErrorMessage from './../ErrorMessage/ErrorMessage'
+import Spinner from './../Spinner/Spinner';
+import ErrorMessage from './../ErrorMessage/ErrorMessage';
+import SimilarFilms from './../SimilarFilms/SimilarFilms';
+
 
 
 class Card extends React.Component{
@@ -13,18 +15,26 @@ class Card extends React.Component{
           movie : [],
           isFavorite: false,
           isLoading: true,
-          isError: false,
+          isError: false
         }
     }
     MovieService = new MovieService();
     
     componentDidMount(){
-        this.getMovie();
+        const { id } = this.props.match.params;
+        this.getMovie(id);
     }    
 
+    componentWillReceiveProps(newProps){
+        const { id } = newProps.match.params;
+        // if(id !== this.state.movie.id)
+        this.getMovie(id);
+    }
+    
+
     // Получение информации о фильме
-    getMovie = () => {        
-        const { id } = this.props.match.params;
+    getMovie = (id) => {      
+        this.setState({ isLoading: true})
         this.MovieService.getMovie(id)
         .then(data =>{
             const isFavorite = this.props.favoriteList.indexOf(data.id) !== -1 ? true : false;
@@ -50,26 +60,30 @@ class Card extends React.Component{
     }
 
     render(){        
-        const {isLoading, isFavorite, isError, movie : {title, poster_path : posterPath}} = this.state;
+        const {isLoading, isFavorite, isError, movie : {title, poster_path : posterPath, id}} = this.state;
         const imagePath = `http://image.tmdb.org/t/p/w500${posterPath}`;
         return(
-            <section className="movie">
-                <button onClick={this.goBack} className="uk-button uk-button-text movie__back">Назад</button>
-                <div className="uk-card uk-card-default movie__card">
-                    <div className="movie__left">
-                        <img src={posterPath ? imagePath : noImg} alt={title} className="movie__poster"/>
-                        <button className="uk-button uk-button-danger movie__fav" 
-                                onClick={this.handleClick}
-                                disabled={isError}>
-                            {isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
-                        </button>
+            <>
+                <section className="movie">
+                    <button onClick={this.goBack} className="uk-button uk-button-text movie__back">Назад</button>
+                    <div className="uk-card uk-card-default movie__card">
+                        <div className="movie__left">
+                            <img src={posterPath ? imagePath : noImg} alt={title} className="movie__poster"/>
+                            <button className="uk-button uk-button-danger movie__fav" 
+                                    onClick={this.handleClick}
+                                    disabled={isError}>
+                                {isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
+                            </button>
+                        </div>
+                            {isLoading ? <Spinner/> : null}
+                            {isError ? <ErrorMessage item="фильм"/> : null}
+                            {!isError && !isLoading  ? <View movie={this.state.movie}/> : null}
+                    
                     </div>
-                        {isLoading ? <Spinner/> : null}
-                        {isError ? <ErrorMessage item="фильм"/> : null}
-                        {!isError && !isLoading  ? <View movie={this.state.movie}/> : null}
-                   
-                </div>
-            </section>
+                </section>
+                {id ?  <SimilarFilms id={id} favoriteList={this.props.favoriteList}/> : null}
+               
+            </>
         )
     }
 }

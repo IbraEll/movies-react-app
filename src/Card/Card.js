@@ -5,9 +5,12 @@ import noPic from './noimage.png';
 
 class Card extends React.Component{
     render(){
-        const {id, title, backdrop_path} = this.props.movie;
+        const {id, title, backdrop_path, poster_path } = this.props.movie;
         const moviePath = `/movie/${id}`
-        const imagePath = backdrop_path ? `http://image.tmdb.org/t/p/w300${backdrop_path}` : noPic;
+        let imagePath = noPic;
+        if(backdrop_path) imagePath =  `http://image.tmdb.org/t/p/w300${backdrop_path}`;
+        else if(poster_path)  imagePath = `http://image.tmdb.org/t/p/w500${poster_path}`;
+
         return(
             <div className=" card">
                 <Link to={moviePath} className="uk-card uk-card-default">
